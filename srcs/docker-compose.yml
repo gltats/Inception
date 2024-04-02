@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  nginx:
+    container_name: nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./requirements/nginx
+    ports:
+      - "80:80" 
+      # - "443:443"
+      # need the https port in future
+    restart: always
+
+networks:
+  inception_network:
+    driver: bridge
+    name: inception_network
+    
+
+# add .env 
+# mariadb and so on
