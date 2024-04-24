@@ -1,11 +1,15 @@
 # Makefile
 
 # Variables
-DOCKER_COMPOSE = docker-compose
-LOCATION =  -f ./srcs/docker-compose.yml
+DOCKER_COMPOSE = @docker compose
+LOCATION =  -f ./srcs/docker-compose.yaml
 
 # Rules
-all: up
+all: build
+
+build:
+	@echo "Building all the containers"
+	$(DOCKER_COMPOSE) $(LOCATION) build
 
 up:
 	$(DOCKER_COMPOSE) $(LOCATION) up -d
@@ -21,9 +25,20 @@ start:
 	$(DOCKER_COMPOSE) $(LOCATION) start
 
 stop:
-	$(DOCKER_COMPOSE) $(LOCATION) stop
+	@echo "Stopping all the containers"
+	$(DOCKER_COMPOSE) $(LOCATION) down --rmi local
 
-re: down
-	$(DOCKER_COMPOSE) $(LOCATION) up --build
+clean:
+	@echo "Cleaning up the docker"
+	@docker system prune -a
+	rm -rf ~/data/mysql/*
 
-.PHONY: up down reload
+fclean:
+	@echo "Pruning all the docker data"
+	@docker system prune --all --force --volumes
+	rm -rf ~/data/mysql/*
+
+re:	stop all
+	@echo "Restarted all the containers"
+
+.PHONY: all up start down stop clean fclean build re

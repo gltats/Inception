@@ -1,0 +1,61 @@
+services:
+  mariadb:
+    container_name: mariadb
+    build:
+      dockerfile: Dockerfile
+      context: ./requirements/mariadb
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: always
+    networks:
+      - inception_network
+
+
+#   wordpress:
+#     container_name: wordpress
+#     build:
+#       dockerfile: Dockerfile
+#       context: ./requirements/wordpress
+#     volumes:
+#       - wordpress_data:/var/www/html
+#     restart: always
+#     depends_on:
+#       - mariadb
+#     networks:
+#       - inception_network
+#     env_file:
+#       - .env
+  
+  nginx:
+    container_name: nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./requirements/nginx
+    ports:
+      - "443:443"
+    restart: always
+    networks:
+      - inception_network
+
+  # volumes:
+  #   - wordpress_data:/var/www/html
+  # depends_on:
+  #   - wordpress
+
+volumes:
+  mariadb_data:
+    name: mariadb_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /Users/${USER}/data/mariadb_data #In case is not macOS, change the path
+
+networks:
+  inception_network:
+    driver: bridge
+    name: inception_network
+    
+# mariadb and so on
