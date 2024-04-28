@@ -1,15 +1,35 @@
 FROM debian:11
 
-RUN apt-get update && apt-get install -y \
-    php7.3-fpm \
-	php7.3-mysql \
+RUN	apt-get update && apt-get install -y \
+	php-fpm \
+	php-mysqlnd \
+	php-cgi \
 	mariadb-client \
-    nano \
-	curl && \
+	nano \
+	wget \
+	unzip \
+	bash \
+	sendmail \
+	curl \
+	iptables \
+	findutils && \
 	rm -rf /var/lib/apt/lists/*
 
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+	&& chmod +x wp-cli.phar \
+	&& mv wp-cli.phar /usr/local/bin/wp
+# RUN rm /etc/php/7.4/fpm/pool.d/www.conf
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/
+
+RUN mkdir /run/php
+
+EXPOSE 900
+
 COPY ./tools/script.sh /
-COPY ./tools/wp-config.php /
 
+# RUN mkdir -p /var/www/html 
+# COPY ./tools/wp-config.php /var/www/html/
 
-CMD [ "/script.sh" ]
+RUN chmod 777 /script.sh
+
+ENTRYPOINT [ "/script.sh" ]
