@@ -23,8 +23,6 @@ COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/
 
 RUN mkdir /run/php
 
-EXPOSE 900
-
 COPY ./tools/script.sh /
 
 # RUN mkdir -p /var/www/html 
