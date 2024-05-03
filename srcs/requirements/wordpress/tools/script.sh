@@ -1,12 +1,30 @@
 #!/bin/bash
+
+DBNAME=$(cat $DB_NAME_FILE)
+DB_HOST=$(cat $DB_HOST_FILE)
+DBUSER=$(cat $DB_USER_FILE)
+DB_PASSWORD=$(cat $DB_PASSWORD_FILE)
+
+WP_HOST=$(cat $WP_HOST_FILE)
+WP_EMAIL=$(cat $WP_EMAIL_FILE)
+WP_ADMIN_USER=$(cat $WP_ADMIN_USER_FILE)
+WP_ADMIN_PASSWORD=$(cat $WP_ADMIN_PASSWORD_FILE)
+WP_ADMIN_EMAIL=$(cat $WP_ADMIN_EMAIL_FILE)
+
+echo "DBNAME: $DBNAME\n"  
+echo "DB_HOST: $DB_HOST\n"
+echo "DBUSER: $DBUSER\n"
+echo "DB_PASSWORD: $DB_PASSWORD\n"
+echo "WP_HOST: $WP_HOST\n"
+echo "WP_EMAIL: $WP_EMAIL\n"
+echo "WP_ADMIN_USER: $WP_ADMIN_USER\n"
+echo "WP_ADMIN_PASSWORD: $WP_ADMIN_PASSWORD\n"
+echo "WP_ADMIN_EMAIL: $WP_ADMIN_EMAIL\n"
+
+
 echo "check if wordpress is installed"
 wp --info
 cd /var/www/html/
-
-if [ -f ./index.php ]
-then
-    echo "WordPress already downloaded"
-else
 
     wget http://wordpress.org/latest.tar.gz
     tar xfz latest.tar.gz
@@ -25,10 +43,7 @@ else
     wp --allow-root user update $DBUSER --user_pass=$DB_PASSWORD --display_name="I_Like_Bacon"
 	wp --allow-root --path=/var/www/html theme install generatepress
 	wp --allow-root --path=/var/www/html theme activate generatepress
-fi
-touch /var/www/html/lock
-chown -R www-data:www-data /var/www/
-chmod -R 777 /var/www/html
+
 echo "Adding secrets to wp-config.php"
 cat << 'EOF' >> /var/www/html/wp-config.php
     define('AUTH_KEY',         'J1fU90>,#E:F^&2&Ay]x2@UZbH.F`T#vM?C$BNj8B1lTJQ;60NmEWhDs>Hhd 8)l');
@@ -41,5 +56,10 @@ cat << 'EOF' >> /var/www/html/wp-config.php
     define('NONCE_SALT',       '0vTf>4a91mCkw7s)ez`*%jGHx~D|xq0X!n|,Z/2[{+?@]t/|`plBx`Pu5jw6@_y&');
 EOF
 echo "done with the secrets, now starting php-fpm"
+
+
+touch /var/www/html/lock
+chown -R www-data:www-data /var/www/
+chmod -R 777 /var/www/html
 
 php-fpm7.4 -F

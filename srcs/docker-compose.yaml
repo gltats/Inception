@@ -11,6 +11,17 @@ services:
     restart: always
     networks:
       - inception_network
+    secrets:
+      - db_host
+      - db_password
+      - db_root_password
+      - dbname
+      - dbuser
+      - wp_admin_email
+      - wp_admin_password
+      - wp_admin_user
+      - wp_email
+      - wp_host 
 
   wordpress:
     container_name: wordpress
@@ -26,6 +37,17 @@ services:
       - inception_network
     env_file:
       - .env
+    secrets:
+      - db_host
+      - db_password
+      - db_root_password
+      - dbname
+      - dbuser
+      - wp_admin_email
+      - wp_admin_password
+      - wp_admin_user
+      - wp_email
+      - wp_host 
   
   nginx:
     container_name: nginx
@@ -62,3 +84,25 @@ networks:
   inception_network:
     driver: bridge
     name: inception_network
+
+secrets:
+  db_host:
+    file: ${FILE}db_host.txt
+  db_password:
+    file: ${FILE}db_password.txt
+  db_root_password:
+    file: ${FILE}db_root_password.txt
+  dbname:
+    file: ${FILE}dbname.txt
+  dbuser:
+    file: ${FILE}dbuser.txt
+  wp_admin_email:
+    file: ${FILE}wp_admin_email.txt
+  wp_admin_password:
+    file: ${FILE}wp_admin_password.txt
+  wp_admin_user:
+    file: ${FILE}wp_admin_user.txt
+  wp_email:
+    file: ${FILE}wp_email.txt
+  wp_host:
+    file: ${FILE}wp_host.txt
